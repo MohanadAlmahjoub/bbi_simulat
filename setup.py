@@ -29,7 +29,7 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Scientific/Engineering :: Medical Science Apps.",
     ],
-    python_requires=">=3.9, <3.11",
+     python_requires=">=3.9, <4.0",
     install_requires=[
         "numpy>=1.20.0,<1.25.0",
         "scipy>=1.7.0,<1.11.0",
