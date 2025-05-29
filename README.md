@@ -26,7 +26,7 @@ The framework is designed for research and publication purposes, with comprehens
 1. Clone the repository:
 ```bash
 git clone https://github.com/MohanadAlmahjoub/bbi_simulat
-cd bbi_simulation
+cd bbi_simulat
 ```
 
 2. Install dependencies:
