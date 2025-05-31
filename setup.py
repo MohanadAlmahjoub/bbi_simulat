@@ -17,7 +17,7 @@ setup(
     description="A simulation framework for closed-loop, real-time affective brain-to-brain interfaces",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/bbi_simulation",
+    url="https://github.com/MohanadAlmahjoub/bbi_simulation",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
