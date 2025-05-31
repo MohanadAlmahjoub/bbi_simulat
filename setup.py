@@ -32,7 +32,7 @@ setup(
     python_requires=">=3.9, <3.15",
     install_requires=[
         "numpy>=1.20.0,<1.25.0",
-        "scipy>=1.7.0,<1.11.0",
+        "scipy>=1.7.0"",
         "matplotlib>=3.4.0,<3.8.0",
         "scikit-learn>=1.0.0,<1.3.0",
         "pandas>=1.3.0,<2.1.0",
