@@ -1,70 +1,124 @@
 # Brain-to-Brain Interface Simulation Framework
 
-A comprehensive simulation framework for closed-loop, real-time affective brain-to-brain interfaces, supporting multi-channel EEG signal generation, ML-based decoding, and neurostimulation response modeling.
+[![PyPI version](https://badge.fury.io/py/bbi-simulation.svg)](https://badge.fury.io/py/bbi-simulation)
+[![Documentation Status](https://readthedocs.io/en/latest/?badge=latest)](https://bbi-simulation.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://github.com/MohanadAlmahjoub/bbi_simulation/workflows/CI/badge.svg)](https://github.com/MohanadAlmahjoub/bbi_simulation/actions)
+[![Coverage Status](https://coveralls.io/repos/github/MohanadAlmahjoub/bbi_simulation/badge.svg?branch=main)](https://coveralls.io/github/MohanadAlmahjoub/bbi_simulation?branch=main)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+**Last updated:** May 31, 2025
+
+A comprehensive Python framework for simulating closed-loop, real-time affective brain-to-brain interfaces.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/MohanadAlmahjoub/bbi_simulation/main/docs/images/bbi_simulation_overview.png" alt="BBI Simulation Overview" width="600"/>
+</p>
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Installation](#installation)
+   - [Prerequisites](#prerequisites)
+   - [Installation Steps](#installation-steps)
+3. [Configuration](#configuration)
+4. [Quick Start](#quick-start)
+   - [Basic Simulation](#basic-simulation)
+   - [Command-Line Interface](#command-line-interface)
+5. [Examples](#examples)
+   - [Valence-Arousal Trajectory](#valence-arousal-trajectory)
+6. [Directory Structure](#directory-structure)
+7. [Testing](#testing)
+8. [Interactive Demo](#interactive-demo)
+9. [Documentation](#documentation)
+10. [Roadmap](#roadmap)
+11. [FAQ & Troubleshooting](#faq--troubleshooting)
+    - [Known Issues](#known-issues)
+12. [Contributing](#contributing)
+13. [Changelog](#changelog)
+14. [Citation](#citation)
+15. [License](#license)
+16. [Author and Contact](#author-and-contact)
 
 ## Overview
 
-This framework provides a modular, configurable platform for simulating brain-to-brain interfaces (BBI) with the following components:
+This framework provides a comprehensive set of tools for simulating affective brain-to-brain interfaces, focusing on real-time emotion transfer and closed-loop control. The platform enables researchers to model, test, and validate BBI protocols before implementation in physical hardware.
 
-1. **EmotionSignal**: Generates multi-channel emotion signals with configurable waveforms, noise, and artifacts
-2. **Decoder**: Decodes EEG signals using simple averaging or ML-based approaches (SVM, Random Forest, MLP)
-3. **Stimulator**: Simulates neurostimulation responses with configurable parameters
-4. **BBISimulation**: Integrates all components into a closed-loop simulation
-5. **ParameterSweep**: Runs sensitivity analyses over parameter grids
+Key features include:
 
-The framework is designed for research and publication purposes, with comprehensive metrics, visualization tools, and manuscript-ready outputs.
+- **Complete Simulation Pipeline**: Emotion generation, EEG-style decoding, neurostimulation response, and closed-loop control
+- **Realistic EEG Signal Generation**: Configurable waveforms, noise, and artifacts
+- **Multiple ML Models**: Support for SVM, Random Forest, and MLP decoders with auto-selection
+- **Parameter Sweep Utility**: Sensitivity analysis across parameter combinations
+- **Publication-Ready Outputs**: High-quality figures and tables for manuscripts
+- **Extensible Plugin Architecture**: Easily add custom components
+- **Comprehensive Documentation**: Detailed API docs and examples
 
 ## Installation
 
-### Requirements
+### Prerequisites
 
-- Python 3.9 or 3.10
-- Required packages: numpy, scipy, matplotlib, scikit-learn, pandas, pyyaml, seaborn
+- Python 3.9 or higher
+- Git (for repository cloning)
+- pip (20.0+)
+- Operating system: Linux, macOS, or Windows
 
 ### Installation Steps
 
-1. Clone the repository:
+For basic installation from PyPI:
+
 ```bash
-git clone https://github.com/MohanadAlmahjoub/bbi_simulation
+pip install bbi-simulation
+```
+
+For development installation:
+
+```bash
+# Clone the repository
+git clone https://github.com/MohanadAlmahjoub/bbi_simulation.git
 cd bbi_simulation
+
+# Create and activate virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # On Linux/macOS
+# or
+venv\Scripts\activate     # On Windows
+
+# Install in development mode with extra dependencies
+pip install -e ".[dev,edf,notebook]"
 ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+To verify installation:
 
-3. Install the package in development mode:
 ```bash
-pip install -e .
+bbi-simulation info
 ```
 
 ## Configuration
 
-The framework is configured using YAML files. The default configuration is located at `config/default_config.yaml`. You can create your own configuration file by copying and modifying this file.
-
-Key configuration sections:
-
-- **simulation**: General simulation parameters (duration, time step, latency jitter)
-- **emotion_signal**: Signal generation parameters (waveform type, frequency, dimensions, channels)
-- **decoder**: Decoding parameters (type, window size, noise, ML model settings)
-- **stimulator**: Stimulation parameters (time constant, threshold)
-- **analysis**: Parameter sweep settings (parameters to sweep, repetitions)
-
-Example configuration:
+All simulation settings are loaded from YAML configuration files. The default configuration file is located at `bbi_simulation/config/default_config.yaml`. Here's an example:
 
 ```yaml
 simulation:
-  duration: 10.0
-  dt: 0.01
-  latency_jitter: 0.01
+  duration: 10.0         # Simulation duration in seconds
+  dt: 0.01               # Time step (seconds)
+  latency_jitter: 0.01   # Random latency variation (seconds)
 
 emotion_signal:
-  kind: "sine"
-  freq: 0.2
-  dims: 2
-  channels: 8
-  channel_names: ["Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4"]
+  kind: "sine"           # Signal type: sine, square, synthetic, data
+  freq: 0.2              # Base frequency (Hz)
+  dims: 2                # Emotion dimensions (e.g., valence, arousal)
+  channels: 8            # Number of simulated EEG channels
+  channel_names:         # Channel names (optional)
+    - "Fp1"
+    - "Fp2"
+    - "F3"
+    - "F4"
+    - "C3"
+    - "C4"
+    - "P3"
+    - "P4"
   noise:
     gaussian:
       enabled: true
@@ -75,220 +129,334 @@ emotion_signal:
       amplitude: 0.05
 
 decoder:
-  type: "ml"
-  window_size: 50
+  type: "ml"             # Decoder type: "avg" or "ml"
+  window_size: 50        # Time window size for decoder (samples)
   ml:
-    model_type: "auto"
-    cv_folds: 5
+    model_type: "auto"   # ML types: "auto", "svm", "rf", "mlp"
+    cv_folds: 5          # Cross-validation folds
 
 stimulator:
-  tau: 0.1
-  threshold: 0.0
+  tau: 0.1               # Time constant (seconds) for response
+  threshold: 0.0         # Threshold for response activation
+
+analysis:
+  sweep:
+    parameters:
+      - name: "freq"
+        values: [0.1, 0.2, 0.5]
+      - name: "noise.gaussian.std"
+        values: [0.05, 0.1, 0.2]
+    repetitions: 5       # Number of repetitions per experiment
 ```
 
-## Usage
+You can copy the default configuration and modify it for your needs, then pass the path to your custom configuration:
+
+```bash
+bbi-simulation simulate --config my_custom_config.yaml --output results/
+```
+
+## Quick Start
 
 ### Basic Simulation
 
-To run a basic simulation with default parameters:
+Run a simple simulation with default parameters:
 
 ```python
+from bbi_simulation.config.schema import ConfigManager
 from bbi_simulation.simulation.bbi_simulation import BBISimulation
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load default configuration
+config_manager = ConfigManager()
+config = config_manager.get_config()
 
 # Create and run simulation
-sim = BBISimulation()
+sim = BBISimulation(config=config)
 results = sim.run()
 
-# Access results
+# Extract results
 t = results['t']
 emotion_signals = results['emotion_signals']
-channel_signals = results['channel_signals']
 decoded = results['decoded']
 response = results['response']
-metrics = results['metrics']
 
-# Print metrics
-print(f"Mean decode correlation: {metrics['mean_decode_correlation']:.4f}")
-print(f"Mean response correlation: {metrics['mean_correlation']:.4f}")
+# Plot results
+plt.figure(figsize=(10, 8))
+
+# Plot emotion signals
+plt.subplot(3, 1, 1)
+for d in range(emotion_signals.shape[1]):
+    plt.plot(t, emotion_signals[:, d], label=f"Dim {d+1}")
+plt.title("Raw Emotion Signals")
+plt.legend()
+
+# Plot decoded signals
+plt.subplot(3, 1, 2)
+for d in range(decoded.shape[1]):
+    plt.plot(t, decoded[:, d], label=f"Dim {d+1}")
+plt.title("Decoded Signals")
+plt.legend()
+
+# Plot response signals
+plt.subplot(3, 1, 3)
+for d in range(response.shape[1]):
+    plt.plot(t, response[:, d], label=f"Dim {d+1}")
+plt.title("Stimulation Responses")
+plt.xlabel("Time (s)")
+plt.legend()
+
+plt.tight_layout()
+plt.show()
 ```
 
-### Parameter Sweep
+### Command-Line Interface
 
-To run a parameter sweep:
-
-```python
-from bbi_simulation.analysis.parameter_sweep import ParameterSweep
-
-# Create parameter sweep
-sweep = ParameterSweep(output_dir='results/parameter_sweep')
-
-# Run parameter sweep
-results = sweep.run()
-
-# Generate plots
-plot_files = sweep.generate_plots()
-```
-
-### Command-line Interface
-
-The framework also provides a command-line interface:
+The package provides a convenient command-line interface:
 
 ```bash
-# Run a single simulation
-python -m bbi_simulation.main --config my_config.yaml --output results
+# Run a quick simulation
+bbi-simulation simulate --duration 5.0 --signal-type sine
 
 # Run a parameter sweep
-python -m bbi_simulation.main --sweep --config my_config.yaml --output results/sweep
+bbi-simulation sweep --param "tau=0.05,0.1,0.2" --param "window_size=25,50"
+
+# Train a decoder model
+bbi-simulation train --data training_data.npz --model-type auto
+
+# Display information
+bbi-simulation info
 ```
-
-## Module Documentation
-
-### EmotionSignal
-
-The `EmotionSignal` class generates synthetic emotion signals with different waveforms across multiple channels.
-
-```python
-from bbi_simulation.core.emotion_signal import EmotionSignal
-from bbi_simulation.config.config_loader import ConfigLoader
-
-# Load configuration
-config_loader = ConfigLoader()
-config = config_loader.get_section('emotion_signal')
-
-# Create signal generator
-signal_gen = EmotionSignal(config)
-
-# Generate signals
-emotion_signals, channel_signals = signal_gen.generate(t)
-```
-
-Key features:
-- Multiple waveform types (sine, square, synthetic data)
-- Multi-channel support with configurable amplitudes
-- Gaussian noise and power-line artifacts
-- External data loading (CSV, EDF)
-
-### Decoder
-
-The `Decoder` class decodes EEG signals into emotion values using simple averaging or ML-based approaches.
-
-```python
-from bbi_simulation.core.decoder import Decoder
-
-# Create decoder
-decoder = Decoder(config)
-
-# Decode signals
-decoded = decoder.decode(eeg_chunk)
-
-# Train ML models
-results = decoder.train(X_train, y_train)
-```
-
-Key features:
-- Simple averaging with configurable noise
-- ML-based decoding with multiple model types (SVM, Random Forest, MLP)
-- Model selection based on cross-validated F1-score
-- Model persistence (save/load)
-
-### Stimulator
-
-The `Stimulator` class simulates neurostimulation responses using an exponential decay kernel.
-
-```python
-from bbi_simulation.core.stimulator import Stimulator
-
-# Create stimulator
-stimulator = Stimulator(config)
-
-# Stimulate
-response = stimulator.stimulate(decoded)
-
-# Compute metrics
-metrics = stimulator.compute_response_metrics(original, response)
-```
-
-Key features:
-- Configurable time constant (tau)
-- Activation threshold
-- Response metrics (correlation, RMSE, delay)
-
-### BBISimulation
-
-The `BBISimulation` class integrates all components into a closed-loop simulation.
-
-```python
-from bbi_simulation.simulation.bbi_simulation import BBISimulation
-
-# Create simulation
-sim = BBISimulation(config_path='my_config.yaml', log_dir='results')
-
-# Run simulation
-results = sim.run(real_time=False)
-```
-
-Key features:
-- End-to-end simulation pipeline
-- Real-time or accelerated simulation
-- Comprehensive logging and metrics
-- Result visualization
-
-### ParameterSweep
-
-The `ParameterSweep` class runs sensitivity analyses over parameter grids.
-
-```python
-from bbi_simulation.analysis.parameter_sweep import ParameterSweep
-
-# Create parameter sweep
-sweep = ParameterSweep(config_path='my_config.yaml', output_dir='results/sweep')
-
-# Run parameter sweep
-results = sweep.run()
-
-# Generate plots
-plot_files = sweep.generate_plots()
-```
-
-Key features:
-- Parameter grid generation
-- Multiple simulation runs
-- CSV output
-- Summary plots for publication
 
 ## Examples
 
-See the `examples` directory for example scripts and notebooks:
+### Valence-Arousal Trajectory
 
-- `examples/basic_simulation.py`: Basic simulation example
-- `examples/parameter_sweep.py`: Parameter sweep example
-- `examples/demo.ipynb`: Interactive demo notebook
+This example demonstrates how to generate and visualize a valence-arousal trajectory:
+
+```python
+from bbi_simulation.core.emotion_signal import EmotionSignal
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create signal generator
+config = {
+    'kind': 'sine',
+    'freq': 0.2,
+    'dims': 2,
+    'channels': 8
+}
+signal_gen = EmotionSignal(config)
+
+# Generate signals
+t = np.arange(0, 10.0, 0.01)  # 10 seconds at 100 Hz
+emotion_signals, _ = signal_gen.generate(t)
+
+# Extract valence and arousal
+valence = emotion_signals[:, 0]
+arousal = emotion_signals[:, 1]
+
+# Plot valence-arousal trajectory
+plt.figure(figsize=(8, 8))
+plt.plot(valence, arousal, 'b-', alpha=0.7)
+plt.plot(valence[0], arousal[0], 'go', label='Start')
+plt.plot(valence[-1], arousal[-1], 'ro', label='End')
+plt.grid(True)
+plt.xlabel('Valence')
+plt.ylabel('Arousal')
+plt.title('Valence-Arousal Trajectory')
+plt.axis('equal')
+plt.legend()
+plt.show()
+```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/MohanadAlmahjoub/bbi_simulation/main/docs/images/valence_arousal_trajectory.png" alt="Valence-Arousal Trajectory" width="400"/>
+</p>
+
+For more examples, see the `examples/` directory:
+- `basic_simulation.py`: Simple simulation with default parameters
+- `parameter_sweep.py`: Sensitivity analysis across parameter combinations
+- `demo.ipynb`: Interactive Jupyter notebook demonstration
+
+## Directory Structure
+
+```
+bbi_simulation/
+├── bbi_simulation/
+│   ├── __init__.py
+│   ├── config/
+│   │   └── default_config.yaml
+│   ├── core/
+│   │   ├── emotion_signal.py
+│   │   ├── decoder.py
+│   │   └── stimulator.py
+│   ├── simulation/
+│   │   └── bbi_simulation.py
+│   ├── analysis/
+│   │   └── parameter_sweep.py
+│   └── utils.py
+├── examples/
+│   ├── basic_simulation.py
+│   ├── parameter_sweep.py
+│   ├── demo.ipynb
+│   ├── colab_demo.ipynb
+│   └── binder_demo.ipynb
+├── tests/
+│   ├── test_emotion_signal.py
+│   ├── test_decoder.py
+│   ├── test_stimulator.py
+│   ├── test_bbi_simulation.py
+│   └── test_edge_cases.py
+├── docs/
+│   ├── images/
+│   │   ├── bbi_simulation_overview.png
+│   │   └── valence_arousal_trajectory.png
+│   └── (Sphinx documentation files)
+├── .github/
+│   └── ISSUE_TEMPLATE/
+│       └── bug_report.md
+├── .gitignore
+├── LICENSE
+├── README.md
+├── CHANGELOG.md
+└── pyproject.toml
+```
 
 ## Testing
 
-Run the tests using pytest:
+To run the test suite:
 
 ```bash
+# Run all tests
 pytest
+
+# Run tests with coverage report
+pytest --cov=bbi_simulation
+
+# Run specific test file
+pytest tests/test_emotion_signal.py
+```
+
+All core functionality is covered by unit tests to ensure reliability and correctness.
+
+## Interactive Demo
+
+Try the interactive demo in your browser:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MohanadAlmahjoub/bbi_simulation/blob/main/examples/colab_demo.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MohanadAlmahjoub/bbi_simulation/main?filepath=examples%2Fdemo.ipynb)
+
+These interactive notebooks allow you to experiment with the framework without installing anything locally.
+
+## Documentation
+
+Full documentation is available at [https://bbi-simulation.readthedocs.io](https://bbi-simulation.readthedocs.io)
+
+The documentation includes:
+- API reference
+- Tutorials
+- Example gallery
+- Theory and background
+
+To build the documentation locally:
+
+```bash
+cd docs
+pip install -r requirements.txt
+make html
+```
+
+Then open `docs/_build/html/index.html` in your browser.
+
+## Roadmap
+
+Future development plans include:
+
+- **Q3 2025**: Integration with real EEG hardware and TMS devices
+- **Q4 2025**: Deep learning models for emotion decoding (LSTM, Transformers)
+- **Q1 2026**: Initial human pilot studies and open data sharing
+- **Q2 2026**: Interactive web interface for real-time visualization
+
+## FAQ & Troubleshooting
+
+**Q: I'm getting import errors with MNE after installation**
+- Make sure you've installed the EDF extras: `pip install -e ".[edf]"`
+- Some systems require additional libraries like libxml2. See the MNE documentation for details.
+
+**Q: The emotion signals don't match my expectations**
+- Check your configuration file to ensure `dims` and `channels` match your data
+- Verify the signal type (`kind`) is appropriate for your use case
+
+**Q: How do I save simulation results?**
+- Use the `--output` flag with the CLI or the `log_dir` parameter with the API
+- Results are saved in NPZ format for data and PNG/PDF for figures
+
+### Known Issues
+
+- **Performance on large datasets**: When using datasets larger than 1GB, memory usage can spike significantly. We recommend using the streaming data loader for large files.
+- **Windows compatibility**: Some visualization features may render differently on Windows. We're working to standardize the appearance across platforms.
+- **Matplotlib backend issues**: In some environments, you may need to explicitly set the Matplotlib backend with `matplotlib.use('Agg')` before importing pyplot.
+
+## Contributing
+
+We welcome contributions! To contribute:
+
+1. Open an Issue describing the problem or feature
+2. Fork the repository
+3. Create a new branch for your feature
+4. Add your changes, ensuring tests pass
+5. Submit a Pull Request
+
+Please follow the existing code style (Black + Flake8) and add appropriate tests for new features.
+
+For more details, see [CONTRIBUTING.md](issue.md).
+
+## Changelog
+
+### v0.1.0 (2025-05-30)
+- Initial release
+- Core simulation components
+- Basic ML decoders
+- Parameter sweep functionality
+- Documentation and examples
+
+For detailed release notes, see [CHANGELOG.md](issue.md).
+
+## Citation
+
+If you use this software in your research, please cite:
+
+```bibtex
+@article{Almahjoub2025,
+  title={Real-Time Affective Co-Regulation via Closed-Loop EEG–TMS Brain-to-Brain Interfaces: Technical Design and Clinical Ethics},
+  author={Almahjoub, Mohanad},
+  journal={NPJ Digital Medicine},
+  year={2025},
+  doi={10.xxxx/xxxxx}
+}
+```
+
+Or for the software package:
+
+```bibtex
+@software{bbi_simulation2025,
+  author = {Almahjoub, Mohanad},
+  title = {Brain-to-Brain Interface Simulation Framework},
+  year = {2025},
+  url = {https://github.com/MohanadAlmahjoub/bbi_simulation},
+  version = {0.1.0}
+}
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Citation
+## Author and Contact
 
-If you use this framework in your research, please cite:
+- **Author**: MOHANAD ALMAHJOUB
+- **Email**: mohanad.almahjoub@std.ankaramedipol.edu.tr
+- **GitHub**: [https://github.com/MohanadAlmahjoub/bbi_simulation](https://github.com/MohanadAlmahjoub/bbi_simulation)
 
-```
-@article{bbi_simulation,
-  title={A Digital Simulation Platform for Closed-Loop Brain-to-Brain Interfaces},
-  author={Your Name},
-  journal={Journal Name},
-  year={2025}
-}
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+For questions and inquiries, please open an [Issue](https://github.com/MohanadAlmahjoub/bbi_simulation/issues) on GitHub or contact via the email address above.
